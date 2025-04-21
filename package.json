@@ -2,10 +2,10 @@
   "name": "telegram-quiz-bot",
   "version": "1.0.0",
   "description": "Telegram bot with WebApp quiz hosted on GitHub Pages + Railway",
-  "main": "bot/bot.js",
+  "main": "telegram/bot.js",
   "scripts": {
-    "start": "node bot/bot.js",
-    "dev": "concurrently \"node bot/bot.js\" \"serve public\"",
+    "start": "node telegram/bot.js",
+    "dev": "concurrently \"node telegram/bot.js\" \"serve public\"",
     "deploy-webapp": "gh-pages -d public",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
