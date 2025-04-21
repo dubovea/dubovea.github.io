@@ -1,0 +1,30 @@
+{
+  "name": "telegram-quiz-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot with WebApp quiz hosted on GitHub Pages + Railway",
+  "main": "bot/bot.js",
+  "scripts": {
+    "start": "node bot/bot.js",
+    "dev": "concurrently \"node bot/bot.js\" \"serve public\"",
+    "deploy-webapp": "gh-pages -d public",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "webapp",
+    "quiz"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "telegraf": "^4.12.2",
+    "telegram-quiz-bot": "file:"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "gh-pages": "^6.1.0",
+    "serve": "^14.2.1"
+  }
+}
