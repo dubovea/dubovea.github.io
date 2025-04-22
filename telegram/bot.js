@@ -48,5 +48,14 @@ bot.on("message", async (ctx) => {
   }
 });
 
-bot.launch();
-console.log("Бот запущен!");
+// Добавьте в конец файла
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
+
+// Для Railway важно явно закрывать соединения
+bot.launch().then(() => {
+  console.log('Бот запущен');
+}).catch(err => {
+  console.error('Ошибка запуска:', err);
+  process.exit(1);
+});
