@@ -23,11 +23,11 @@ bot.command("start", (ctx) => {
 });
 
 bot.on("message", async (ctx) => {
-  if (!ctx.message.web_app_data) return;
-  if (ctx.message.web_app_data) {
+  if (ctx.message) {
     console.log("Received data from platform:", 
-      ctx.message.via_web_app?.platform || 'unknown');
+      ctx.message);
   }
+  if (!ctx.message.web_app_data) return;
   try {
     const data = JSON.parse(ctx.message.web_app_data.data);
     await ctx.reply(
