@@ -1,24 +1,18 @@
-const { Telegraf } = require("telegraf");
+const { Telegraf, Markup } = require("telegraf");
 const dotenv = require("dotenv");
 dotenv.config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+// Команда старта с обычной клавиатурой
 bot.command("start", (ctx) => {
   ctx.reply(
     "Добро пожаловать в викторину! Нажмите кнопку ниже, чтобы начать.",
-    {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "Начать викторину",
-              web_app: { url: process.env.WEBAPP_URL },
-            },
-          ],
-        ],
-      },
-    }
+    Markup.keyboard([
+      Markup.button.webApp("Начать викторину", process.env.WEBAPP_URL)
+    ])
+    .oneTime()  // Клавиатура скроется после использования
+    .resize()   // Оптимальный размер кнопок
   );
 });
 
