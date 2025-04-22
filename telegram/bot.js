@@ -24,13 +24,29 @@ bot.command("start", (ctx) => {
 });
 
 // Обработка данных из WebApp
-bot.on("message", (ctx) => {
+bot.on("message", async (ctx) => {
   if (ctx.message.web_app_data) {
     const data = JSON.parse(ctx.message.web_app_data.data);
-    ctx.reply(
-      `Вы завершили викторину с результатом: ${data.score} из ${data.total}!`
+    
+    // Отправляем результат в чат
+    await ctx.reply(
+      `🎉 Викторина завершена!\nВаш результат: ${data.score} из ${data.total}`
     );
+    
+    // Закрываем WebApp
+    try {
+      await ctx.answerWebApp({
+        type: "close_web_app",
+      });
+    } catch (e) {
+      console.log("Ошибка при закрытии WebApp:", e.message);
+    }
   }
 });
 
 bot.launch();
+console.log("Бот запущен и готов к работе!");
+
+// Обработка ошибок
+process.once("SIGINT", () => bot.stop("SIGINT"));
+process.once("SIGTERM", () => bot.stop("SIGTERM"));
