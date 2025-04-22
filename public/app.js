@@ -79,9 +79,10 @@ function selectOption(index) {
 }
 
 function showFinalResults(score, total) {
+  document.getElementById("question").textContent = "Викторина завершена!";
+  document.getElementById("options").innerHTML = "";
+
   if (window.Telegram?.WebApp) {
-    document.getElementById("question").textContent = "Викторина завершена!";
-    document.getElementById("options").innerHTML = "";
     Telegram.WebApp.sendData(
       JSON.stringify({
         score: score,
