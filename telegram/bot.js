@@ -9,10 +9,10 @@ bot.command("start", (ctx) => {
   ctx.reply(
     "Добро пожаловать в викторину! Нажмите кнопку ниже, чтобы начать.",
     Markup.keyboard([
-      Markup.button.webApp("Начать викторину", process.env.WEBAPP_URL)
+      Markup.button.webApp("Начать викторину", process.env.WEBAPP_URL),
     ])
-    .oneTime()  // Клавиатура скроется после использования
-    .resize()   // Оптимальный размер кнопок
+      .oneTime() // Клавиатура скроется после использования
+      .resize() // Оптимальный размер кнопок
   );
 });
 
@@ -20,20 +20,13 @@ bot.on("message", async (ctx) => {
   if (!ctx.message.web_app_data) return;
   try {
     const data = JSON.parse(ctx.message.web_app_data.data);
-    await ctx.reply(
+    ctx.reply(
       `🎉 Вы набрали ${data.score} из ${data.total} правильных ответов!`,
-      {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "Пройти ещё раз",
-                web_app: { url: process.env.WEBAPP_URL },
-              },
-            ],
-          ],
-        },
-      }
+      Markup.keyboard([
+        Markup.button.webApp("Начать викторину", process.env.WEBAPP_URL),
+      ])
+        .oneTime() // Клавиатура скроется после использования
+        .resize() // Оптимальный размер кнопок
     );
   } catch (e) {
     console.error("Ошибка:", e);
