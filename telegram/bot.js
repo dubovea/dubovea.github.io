@@ -2,60 +2,44 @@ const { Telegraf } = require("telegraf");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
-
-bot.command("start", (ctx) => {
-  ctx.reply(
-    "Добро пожаловать в викторину! Нажмите кнопку ниже, чтобы начать.",
-    {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "Начать викторину",
-              web_app: { url: process.env.WEBAPP_URL },
-            },
-          ],
-        ],
-      },
-    }
-  );
-});
-
-bot.on("message", async (ctx) => {
-  if (!ctx.message.web_app_data) return;
-
-  try {
-    const data = JSON.parse(ctx.message.web_app_data.data);
-    await ctx.reply(
-      `🎉 Вы набрали ${data.score} из ${data.total} правильных ответов!`,
-      {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "Пройти ещё раз",
-                web_app: { url: process.env.WEBAPP_URL },
-              },
-            ],
-          ],
-        },
-      }
-    );
-  } catch (e) {
-    console.error("Ошибка:", e);
-    await ctx.reply("Произошла ошибка при обработке результатов.");
+const bot = new Telegraf(process.env.BOT_TOKEN, {
+  handlerTimeout: 9000, // Увеличиваем таймаут
+  telegram: { 
+    webhookReply: false // Отключаем webhook для мобильных ответов
   }
 });
 
-// Добавьте в конец файла
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
-
-// Для Railway важно явно закрывать соединения
-bot.launch().then(() => {
-  console.log('Бот запущен');
-}).catch(err => {
-  console.error('Ошибка запуска:', err);
-  process.exit(1);
+// Обработчик для WebApp
+bot.on("message", async (ctx) => {
+  if (!ctx.message.web_app_data) return;
+  
+  try {
+    const data = JSON.parse(ctx.message.web_app_data.data);
+    
+    // Отправляем ответ через API (не через webhook)
+    await ctx.telegram.sendMessage(
+      ctx.chat.id,
+      `🎯 Ваш результат: ${data.score}/${data.total}`,
+      { parse_mode: "HTML" }
+    );
+    
+  } catch (e) {
+    console.error("Mobile WebApp error:", e);
+    await ctx.reply("⚠️ Ошибка обработки. Попробуйте позже.");
+  }
 });
+
+// Запуск с разными параметрами для мобильных устройств
+bot.launch({
+  polling: process.env.NODE_ENV !== "production",
+  webhook: process.env.NODE_ENV === "production" ? {
+    domain: process.env.WEBHOOK_DOMAIN,
+    port: process.env.PORT || 3000
+  } : undefined
+}).then(() => {
+  console.log(`Бот запущен в ${process.env.NODE_ENV || "development"} режиме`);
+});
+
+// Graceful shutdown
+process.once("SIGINT", () => bot.stop("SIGINT"));
+process.once("SIGTERM", () => bot.stop("SIGTERM"));
