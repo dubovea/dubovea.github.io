@@ -17,11 +17,12 @@ function initApp() {
   if (window.Telegram?.WebApp) {
     Telegram.WebApp.expand();
     userData = Telegram.WebApp.initDataUnsafe?.user || {};
-    applyColorScheme(Telegram.WebApp.colorScheme === 'dark');
+    const isDark = Telegram.WebApp.colorScheme === 'dark';
+    applyColorScheme(isDark);
 
     if (userData.username) {
       document.querySelector('h1').textContent = 
-        `Привет, ${userData.username}! Добро пожаловать в викторину!`;
+        `Привет, ${userData.username}! Добро пожаловать в викторину! ${isDark ? 'Темная тема' : 'Светлая тема'}`;
     }
   } else {
     applyColorScheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
